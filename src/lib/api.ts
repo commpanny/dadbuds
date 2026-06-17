@@ -1,3 +1,5 @@
+import { getAdminToken } from "./adminAuth";
+
 export type User = {
   id: number;
   name: string;
@@ -72,20 +74,27 @@ export type Message = {
 const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 type ApiOptions = Omit<RequestInit, "body"> & {
+  admin?: boolean;
   body?: BodyInit | Record<string, unknown> | null;
 };
 
 async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const headers = new Headers(options.headers);
-  let body = options.body;
+  const { admin, body: requestBody, ...requestOptions } = options;
+  let body = requestBody;
 
   if (body && typeof body === "object" && !(body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
     body = JSON.stringify(body);
   }
 
+  if (admin) {
+    const token = getAdminToken();
+    if (token) headers.set("X-Admin-Token", token);
+  }
+
   const response = await fetch(`${apiBase}${path}`, {
-    ...options,
+    ...requestOptions,
     headers,
     body,
   });
@@ -107,7 +116,7 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
 export const api = {
   createUser: (payload: Record<string, unknown>) =>
     request<User>("/users", { method: "POST", body: payload }),
-  listUsers: () => request<User[]>("/users"),
+  listUsers: () => request<User[]>("/users", { admin: true }),
   getUser: (id: number) => request<User>(`/users/${id}`),
   findUserByEmail: (email: string) =>
     request<User>(`/users/by-email/${encodeURIComponent(email)}`),
@@ -118,17 +127,22 @@ export const api = {
     }),
   listAvailability: (userId?: number | null) => {
     const suffix = userId ? `?user_id=${userId}` : "";
-    return request<AvailabilityWindow[]>(`/availability${suffix}`);
+    return request<AvailabilityWindow[]>(`/availability${suffix}`, {
+      admin: !userId,
+    });
   },
   updateAvailabilityStatus: (id: number, status: string) =>
     request<AvailabilityWindow>(`/availability/${id}/status`, {
       method: "PATCH",
+      admin: true,
       body: { status },
     }),
   listPlans: (includeDrafts = false) =>
-    request<Plan[]>(`/plans${includeDrafts ? "?include_drafts=true" : ""}`),
+    request<Plan[]>(`/plans${includeDrafts ? "?include_drafts=true" : ""}`, {
+      admin: includeDrafts,
+    }),
   createPlan: (payload: Record<string, unknown>) =>
-    request<Plan>("/plans", { method: "POST", body: payload }),
+    request<Plan>("/plans", { method: "POST", admin: true, body: payload }),
   createRsvp: (planId: number, payload: Record<string, unknown>) =>
     request<Rsvp>(`/plans/${planId}/rsvps`, {
       method: "POST",
@@ -136,17 +150,23 @@ export const api = {
     }),
   listRsvps: (userId?: number | null) => {
     const suffix = userId ? `?user_id=${userId}` : "";
-    return request<Rsvp[]>(`/rsvps${suffix}`);
+    return request<Rsvp[]>(`/rsvps${suffix}`, { admin: !userId });
   },
   generateMessage: (planId: number) =>
     request<Message>(`/plans/${planId}/generate-message`, {
       method: "POST",
+      admin: true,
     }),
-  listMessages: () => request<Message[]>("/messages"),
+  listMessages: () => request<Message[]>("/messages", { admin: true }),
   createMessage: (payload: Record<string, unknown>) =>
-    request<Message>("/messages", { method: "POST", body: payload }),
+    request<Message>("/messages", {
+      method: "POST",
+      admin: true,
+      body: payload,
+    }),
   fakeSendMessage: (messageId: number) =>
     request<Message>(`/messages/${messageId}/fake-send`, {
       method: "PATCH",
+      admin: true,
     }),
 };

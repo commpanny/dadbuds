@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, func, select
 
@@ -36,12 +37,17 @@ from .schemas import (
 
 app = FastAPI(title="DadBuds API", version="0.1.0")
 
+frontend_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "FRONTEND_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=frontend_origins,
     allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
     allow_credentials=True,
     allow_methods=["*"],
@@ -63,6 +69,25 @@ def health() -> dict[str, str]:
 
 def normalize_email(email: str) -> str:
     return email.strip().lower()
+
+
+def configured_admin_token() -> str:
+    return os.getenv("ADMIN_TOKEN", "").strip()
+
+
+def verify_admin_token(x_admin_token: Optional[str]) -> None:
+    token = configured_admin_token()
+    if not token or token == "change-me":
+        raise HTTPException(
+            status_code=503,
+            detail="Admin auth is not configured. Set ADMIN_TOKEN before using admin routes.",
+        )
+    if x_admin_token != token:
+        raise HTTPException(status_code=401, detail="Invalid admin token.")
+
+
+def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> None:
+    verify_admin_token(x_admin_token)
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[DadUser]:
@@ -217,7 +242,10 @@ def create_user(payload: UserCreate, session: Session = Depends(get_session)):
 
 
 @app.get("/users", response_model=list[UserRead])
-def list_users(session: Session = Depends(get_session)):
+def list_users(
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     users = session.exec(select(DadUser).order_by(DadUser.created_at.desc())).all()
     return [user_to_read(session, user) for user in users]
 
@@ -265,8 +293,11 @@ def create_availability(
 @app.get("/availability", response_model=list[AvailabilityRead])
 def list_availability(
     user_id: Optional[int] = Query(default=None),
+    x_admin_token: Optional[str] = Header(default=None),
     session: Session = Depends(get_session),
 ):
+    if user_id is None:
+        verify_admin_token(x_admin_token)
     statement = select(AvailabilityWindow)
     if user_id:
         statement = statement.where(AvailabilityWindow.user_id == user_id)
@@ -280,6 +311,7 @@ def update_availability_status(
     availability_id: int,
     payload: AvailabilityStatusUpdate,
     session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
 ):
     item = session.get(AvailabilityWindow, availability_id)
     if not item:
@@ -292,7 +324,11 @@ def update_availability_status(
 
 
 @app.post("/plans", response_model=PlanRead)
-def create_plan(payload: PlanCreate, session: Session = Depends(get_session)):
+def create_plan(
+    payload: PlanCreate,
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     plan = Plan(
         title=payload.title.strip(),
         description=payload.description.strip(),
@@ -326,8 +362,11 @@ def create_plan(payload: PlanCreate, session: Session = Depends(get_session)):
 @app.get("/plans", response_model=list[PlanRead])
 def list_plans(
     include_drafts: bool = Query(default=False),
+    x_admin_token: Optional[str] = Header(default=None),
     session: Session = Depends(get_session),
 ):
+    if include_drafts:
+        verify_admin_token(x_admin_token)
     statement = select(Plan)
     if not include_drafts:
         statement = statement.where(
@@ -389,8 +428,11 @@ def create_rsvp(
 @app.get("/rsvps", response_model=list[RsvpRead])
 def list_rsvps(
     user_id: Optional[int] = Query(default=None),
+    x_admin_token: Optional[str] = Header(default=None),
     session: Session = Depends(get_session),
 ):
+    if user_id is None:
+        verify_admin_token(x_admin_token)
     statement = select(Rsvp)
     if user_id:
         statement = statement.where(Rsvp.user_id == user_id)
@@ -413,7 +455,11 @@ def list_rsvps(
 
 
 @app.post("/plans/{plan_id}/generate-message", response_model=MessageRead)
-def generate_plan_message(plan_id: int, session: Session = Depends(get_session)):
+def generate_plan_message(
+    plan_id: int,
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     plan = session.get(Plan, plan_id)
     if not plan:
         raise HTTPException(status_code=404, detail="Plan not found.")
@@ -447,13 +493,20 @@ def generate_plan_message(plan_id: int, session: Session = Depends(get_session))
 
 
 @app.get("/messages", response_model=list[MessageRead])
-def list_messages(session: Session = Depends(get_session)):
+def list_messages(
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     messages = session.exec(select(Message).order_by(Message.created_at.desc())).all()
     return [message_to_read(message) for message in messages]
 
 
 @app.post("/messages", response_model=MessageRead)
-def create_message(payload: MessageCreate, session: Session = Depends(get_session)):
+def create_message(
+    payload: MessageCreate,
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     message = Message(
         channel=payload.channel,
         recipient_type=payload.recipient_type,
@@ -469,7 +522,11 @@ def create_message(payload: MessageCreate, session: Session = Depends(get_sessio
 
 
 @app.patch("/messages/{message_id}/fake-send", response_model=MessageRead)
-def fake_send_message(message_id: int, session: Session = Depends(get_session)):
+def fake_send_message(
+    message_id: int,
+    session: Session = Depends(get_session),
+    _admin: None = Depends(require_admin),
+):
     message = session.get(Message, message_id)
     if not message:
         raise HTTPException(status_code=404, detail="Message not found.")

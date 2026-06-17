@@ -19,7 +19,7 @@ const initialForm = {
   kids_age_range: "",
   discord_username: "",
   comfort_level: comfortLevels[1],
-  sms_opt_in: true,
+  sms_opt_in: false,
 };
 
 export default function SignupPage() {
@@ -71,7 +71,7 @@ export default function SignupPage() {
               <Send size={18} />
               Add availability
             </Link>
-            <a className="btn-secondary" href="https://discord.com">
+            <a className="btn-secondary" href="https://discord.gg/qWEp9bTd">
               <MessageCircle size={18} />
               Link Discord
             </a>
@@ -234,13 +234,27 @@ export default function SignupPage() {
                 }
               />
               <span>
-                <strong>SMS opt-in</strong>
+                <strong>Optional SMS pilot consent</strong>
                 <span className="block pt-1 text-ink/65">
-                  For MVP this records consent only. Real Twilio sends come
-                  later.
+                  I agree DadBuds may text me about Spokane pilot plans,
+                  RSVPs, and follow-ups. Consent is optional and not required to
+                  join. Message and data rates may apply. Reply STOP to opt out
+                  after real SMS is enabled. For now this records consent only;
+                  no real Twilio sends happen yet.
                 </span>
               </span>
             </label>
+            <p className="text-xs leading-5 text-ink/55">
+              By creating a profile, you agree to the DadBuds pilot{" "}
+              <Link className="font-bold underline" to="/terms">
+                terms
+              </Link>{" "}
+              and acknowledge the{" "}
+              <Link className="font-bold underline" to="/privacy">
+                privacy notice
+              </Link>
+              .
+            </p>
             {error ? (
               <p className="rounded-md bg-brick/10 p-3 text-sm font-semibold text-brick">
                 {error}

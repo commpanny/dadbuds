@@ -245,7 +245,7 @@ export default function HomePage() {
               <CheckCircle2 size={18} />
               Join Spokane Pilot
             </Link>
-            <a className="btn-secondary" href="https://discord.com">
+            <a className="btn-secondary" href="https://discord.gg/qWEp9bTd">
               <MessageCircle size={18} />
               Discord
             </a>

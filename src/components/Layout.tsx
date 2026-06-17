@@ -46,7 +46,7 @@ export default function Layout() {
           <div className="hidden items-center gap-2 md:flex">
             <a
               className="btn-secondary"
-              href="https://discord.com"
+              href="https://discord.gg/qWEp9bTd"
               rel="noreferrer"
               target="_blank"
             >
@@ -101,9 +101,15 @@ export default function Layout() {
       <footer className="border-t border-ink/10 bg-pencil py-8 text-cream">
         <div className="section-shell flex flex-col justify-between gap-4 text-sm md:flex-row md:items-center">
           <p className="font-semibold">DadBuds.lol · Spokane pilot</p>
-          <p className="text-cream/70">
-            The end of “we should hang sometime.”
-          </p>
+          <div className="flex flex-wrap gap-4 text-cream/70">
+            <Link className="hover:text-cream" to="/privacy">
+              Privacy
+            </Link>
+            <Link className="hover:text-cream" to="/terms">
+              Terms
+            </Link>
+            <span>The end of “we should hang sometime.”</span>
+          </div>
         </div>
       </footer>
     </div>

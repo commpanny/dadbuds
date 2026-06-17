@@ -81,7 +81,7 @@ export default function MePage() {
                   <CalendarClock size={18} />
                   Add availability
                 </Link>
-                <a className="btn-secondary" href="https://discord.com">
+                <a className="btn-secondary" href="https://discord.gg/qWEp9bTd">
                   <MessageCircle size={18} />
                   Discord
                 </a>
