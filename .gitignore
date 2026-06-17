@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.local
+.venv/
+.pycache/
+__pycache__/
+*.pyc
+backend/dadbuds.db
+.DS_Store

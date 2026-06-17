@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #343230;
+  background: #f7d982;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background-color: #f7d982;
+  background-image:
+    linear-gradient(rgba(74, 71, 66, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 71, 66, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-sm transition hover:bg-pencil focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-pencil/25 bg-cream px-4 py-2 text-sm font-semibold text-ink shadow-sm transition hover:border-moss hover:text-moss focus:outline-none focus:ring-2 focus:ring-moss focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-ink transition hover:bg-ink/5 focus:outline-none focus:ring-2 focus:ring-moss focus:ring-offset-2;
+  }
+
+  .input {
+    @apply min-h-11 w-full rounded-md border border-pencil/25 bg-cream px-3 py-2 text-sm text-ink outline-none transition placeholder:text-ink/40 focus:border-moss focus:ring-2 focus:ring-moss/20;
+  }
+
+  .label {
+    @apply text-sm font-semibold text-ink;
+  }
+
+  .card {
+    @apply rounded-lg border border-pencil/15 bg-cream p-5 shadow-soft;
+  }
+
+  .section-shell {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+}
