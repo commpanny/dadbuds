@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, MapPin, UsersRound } from "lucide-react";
+import { ArrowRight, MapPin, UsersRound } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const steps = [
@@ -70,8 +70,7 @@ export default function HowItWorksPage() {
             </p>
             <p className="mt-4 max-w-2xl leading-7 text-ink/72">
               No signup required. This is the live, recurring DadBuds park hang:
-              show up if it works, bring kids if you have them, and leave when
-              you need to leave.
+              show up if it works and leave when you need to leave.
             </p>
             <a
               className="btn-secondary mt-5 inline-flex"
@@ -101,11 +100,6 @@ export default function HowItWorksPage() {
               sports calendars, basketball, pickleball, and local events fill
               in the rest.
             </p>
-            <div className="mt-6 grid gap-3 text-sm font-bold sm:grid-cols-3">
-              <span className="rounded-md bg-cream px-3 py-3">Free pilot</span>
-              <span className="rounded-md bg-cream px-3 py-3">10 plans</span>
-              <span className="rounded-md bg-cream px-3 py-3">5 meetups</span>
-            </div>
           </div>
           <div className="rounded-lg bg-pencil p-6 text-cream">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber">
@@ -114,27 +108,6 @@ export default function HowItWorksPage() {
             <p className="mt-4 text-3xl font-black leading-tight">
               The plan needs a date, place, and thread.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-sky py-14">
-        <div className="section-shell grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
-          <div>
-            <h2 className="text-3xl font-black">The pilot is free</h2>
-            <p className="mt-3 max-w-2xl leading-7 text-ink/72">
-              Join the Spokane pilot list. Get in the car.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-            <Link className="btn-primary" to="/join/signup">
-              <CheckCircle2 size={18} />
-              Join Spokane Pilot
-            </Link>
-            <Link className="btn-secondary" to="/">
-              Back to DadBuds
-              <ArrowRight size={18} />
-            </Link>
           </div>
         </div>
       </section>

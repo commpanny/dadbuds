@@ -127,8 +127,7 @@ export default function JoinSignupPage() {
             </p>
             <p className="mt-4 leading-7 text-ink/72">
               No signup required. This is the live, recurring DadBuds park hang:
-              show up if it works, bring kids if you have them, and leave when
-              you need to leave.
+              show up if it works and leave when you need to leave.
             </p>
             <a
               className="btn-secondary mt-5 inline-flex"
