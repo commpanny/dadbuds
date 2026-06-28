@@ -86,29 +86,19 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="bg-paper py-14">
-        <div className="section-shell grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-center">
-          <div>
-            <h2 className="text-3xl font-black">Spokane pilot</h2>
-            <p className="mt-4 leading-7 text-ink/72">
-              Spokane has plenty to do. DadBuds turns recurring activities,
-              venue calendars, and local schedules into plans with dates,
-              locations, and RSVP state.
-            </p>
-            <p className="mt-4 leading-7 text-ink/72">
-              The pilot starts with one night activity per week and one
-              kid-friendly park or playground session each weekend. Trivia,
-              sports calendars, basketball, pickleball, and local events fill
-              in the rest.
-            </p>
-          </div>
-          <div className="rounded-lg bg-pencil p-6 text-cream">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber">
-              Core promise
-            </p>
-            <p className="mt-4 text-3xl font-black leading-tight">
-              The plan needs a date, place, and thread.
-            </p>
-          </div>
+        <div className="section-shell max-w-3xl">
+          <h2 className="text-3xl font-black">Spokane pilot</h2>
+          <p className="mt-4 leading-7 text-ink/72">
+            Spokane has plenty to do. DadBuds turns recurring activities, venue
+            calendars, and local schedules into plans with dates, locations, and
+            RSVP state.
+          </p>
+          <p className="mt-4 leading-7 text-ink/72">
+            The pilot starts with one night activity per week and one
+            kid-friendly park or playground session each weekend. Trivia, sports
+            calendars, basketball, pickleball, and local events fill in the
+            rest.
+          </p>
         </div>
       </section>
 
