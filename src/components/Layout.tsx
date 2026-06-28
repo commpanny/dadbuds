@@ -1,7 +1,6 @@
 import { Menu, MessageCircle, UserRound } from "lucide-react";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import InlineFeedback from "./InlineFeedback";
 
 const navItems = [
   { to: "/plans", label: "Spokane Calendar" },
@@ -25,6 +24,7 @@ const internalNavItems =
 const visibleNavItems = fullAppEnabled
   ? [...navItems, ...internalNavItems]
   : [];
+const InlineFeedback = shadowMode ? lazy(() => import("./InlineFeedback")) : null;
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
@@ -141,7 +141,11 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
-      {shadowMode ? <InlineFeedback /> : null}
+      {InlineFeedback ? (
+        <Suspense fallback={null}>
+          <InlineFeedback />
+        </Suspense>
+      ) : null}
 
       <footer className="border-t border-ink/10 bg-pencil py-8 text-cream">
         <div className="section-shell flex flex-col justify-between gap-4 text-sm md:flex-row md:items-center">
