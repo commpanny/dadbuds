@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, UsersRound } from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin, UsersRound } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const steps = [
@@ -51,6 +51,37 @@ export default function HowItWorksPage() {
                 <p className="mt-4 font-bold leading-6">{step}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream py-14">
+        <div className="section-shell">
+          <div className="rounded-lg border border-moss/25 bg-moss/10 p-6">
+            <div className="flex items-center gap-2 text-moss">
+              <MapPin size={20} />
+              <h2 className="text-xl font-black">Standing invite</h2>
+            </div>
+            <p className="mt-4 text-2xl font-black leading-tight">
+              Upper Manito Playground
+            </p>
+            <p className="mt-2 text-lg font-bold text-ink/72">
+              Sundays, 10:00 AM-noon
+            </p>
+            <p className="mt-4 max-w-2xl leading-7 text-ink/72">
+              No signup required. This is the live, recurring DadBuds park hang:
+              show up if it works, bring kids if you have them, and leave when
+              you need to leave.
+            </p>
+            <a
+              className="btn-secondary mt-5 inline-flex"
+              href="https://www.google.com/maps/search/?api=1&query=Upper+Manito+Playground+Spokane+WA"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Open map
+              <ArrowRight size={18} />
+            </a>
           </div>
         </div>
       </section>

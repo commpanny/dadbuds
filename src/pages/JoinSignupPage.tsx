@@ -143,15 +143,12 @@ export default function JoinSignupPage() {
         </div>
 
         <form
-          action="/join/thanks"
+          action="/api/join"
           className="rounded-lg border border-pencil/15 bg-paper p-6 shadow-soft"
-          data-netlify="true"
           method="POST"
           name="dadbuds-spokane-beta"
-          netlify-honeypot="bot-field"
           onSubmit={onSubmit}
         >
-          <input name="form-name" type="hidden" value="dadbuds-spokane-beta" />
           {trackedFields.map((field) => (
             <input
               key={field}
