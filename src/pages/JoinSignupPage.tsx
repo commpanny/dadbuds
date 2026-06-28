@@ -100,7 +100,7 @@ export default function JoinSignupPage() {
             </div>
             <h1 className="mt-5 text-4xl font-black">Join Spokane beta</h1>
             <p className="mt-3 text-lg font-bold text-brick">
-              First 25 Spokane members get in free.
+              The pilot is free. Get in the car.
             </p>
             <p className="mt-5 leading-7 text-ink/72">
               DadBuds starts with enough local density to make plans useful. The

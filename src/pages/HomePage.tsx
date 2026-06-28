@@ -125,6 +125,10 @@ const faqs = [
     a: "No. You can bookmark, attend, or stay out of a plan without explaining yourself.",
   },
   {
+    q: "Does this cost money?",
+    a: "The pilot is free. Get in the car.",
+  },
+  {
     q: "Can I be a dick?",
     a: "No. Don’t be a dick.",
   },
@@ -233,9 +237,7 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
               in the rest.
             </p>
             <div className="mt-6 grid gap-3 text-sm font-bold sm:grid-cols-3">
-              <span className="rounded-md bg-cream px-3 py-3">
-                25 founding spots
-              </span>
+              <span className="rounded-md bg-cream px-3 py-3">Free pilot</span>
               <span className="rounded-md bg-cream px-3 py-3">10 plans</span>
               <span className="rounded-md bg-cream px-3 py-3">5 meetups</span>
             </div>
@@ -279,13 +281,9 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
       <section className="bg-sky py-16">
         <div className="section-shell grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <div>
-            <h2 className="text-3xl font-black">
-              First 25 Spokane members get in free
-            </h2>
+            <h2 className="text-3xl font-black">The pilot is free</h2>
             <p className="mt-3 max-w-2xl leading-7 text-ink/72">
-              Join the Spokane pilot list. We’ll use the first group to prove
-              the calendar, standing plans, and event threads are useful before
-              opening it wider.
+              Join the Spokane pilot list. Get in the car.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
