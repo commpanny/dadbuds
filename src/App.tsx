@@ -34,6 +34,7 @@ export default function App() {
         <Route path="/join/signup" element={<JoinSignupPage />} />
         <Route path="/join/thanks" element={<JoinThanksPage />} />
         <Route path="/signup" element={<Navigate to="/join/signup" replace />} />
+        <Route path="/standard" element={<CommunityStandardPage />} />
         {fullAppEnabled ? (
           <>
             <Route path="/signin" element={<SigninPage />} />
@@ -43,7 +44,6 @@ export default function App() {
             <Route path="/free" element={<AvailabilityPage />} />
             <Route path="/me" element={<MePage />} />
             <Route path="/sim" element={<SimulationPage />} />
-            <Route path="/standard" element={<CommunityStandardPage />} />
             <Route
               path="/admin"
               element={

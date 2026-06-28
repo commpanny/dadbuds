@@ -125,8 +125,8 @@ const faqs = [
     a: "No. You can bookmark, attend, or stay out of a plan without explaining yourself.",
   },
   {
-    q: "Is SMS live yet?",
-    a: "Not yet. For the Spokane pilot, message drafts stay in the admin dashboard before any real send.",
+    q: "Can I be a dick?",
+    a: "No. Don’t be a dick.",
   },
 ];
 
@@ -318,7 +318,17 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
                   <UsersRound size={18} className="text-moss" />
                   <h3 className="font-black">{faq.q}</h3>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-ink/70">{faq.a}</p>
+                <p className="mt-3 text-sm leading-6 text-ink/70">
+                  {faq.a}
+                  {faq.q === "Can I be a dick?" ? (
+                    <>
+                      {" "}
+                      <Link className="font-bold underline" to="/standard">
+                        Read the policy.
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
               </div>
             ))}
           </div>
