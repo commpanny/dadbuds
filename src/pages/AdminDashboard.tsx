@@ -26,7 +26,7 @@ const adminLinks = [
     to: "/admin/plans/new",
     label: "Create plan",
     icon: PlusCircle,
-    description: "Draft or publish a low-pressure Spokane hang.",
+    description: "Draft or publish a Spokane calendar plan.",
   },
   {
     to: "/admin/messages",
@@ -124,4 +124,3 @@ function Stat({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
-

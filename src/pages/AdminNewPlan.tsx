@@ -18,30 +18,42 @@ const defaultForm = {
   visibility: "public",
 };
 
+type PlanCandidateState = typeof defaultForm & {
+  tags?: string[];
+  related_interests?: string[];
+};
+
 export default function AdminNewPlan() {
   const location = useLocation();
-  const sourceItem = (location.state as { item?: AvailabilityWindow } | null)
-    ?.item;
+  const routeState = location.state as {
+    item?: AvailabilityWindow;
+    candidate?: PlanCandidateState;
+  } | null;
+  const sourceItem = routeState?.item;
+  const sourceCandidate = routeState?.candidate;
   const seeded = useMemo(() => {
+    if (sourceCandidate) return { ...defaultForm, ...sourceCandidate };
     if (!sourceItem) return defaultForm;
     return {
       ...defaultForm,
-      title: `${sourceItem.preferred_vibe} DadBuds hang`,
+      title: `${sourceItem.preferred_vibe} DadBuds plan`,
       description:
         sourceItem.notes ||
-        `Low-pressure ${sourceItem.preferred_vibe.toLowerCase()} hang for dads who said they were free.`,
+        `${sourceItem.preferred_vibe} plan based on submitted availability.`,
       date: sourceItem.date,
       start_time: sourceItem.start_time,
       end_time: sourceItem.end_time,
       kid_friendly: sourceItem.kid_status !== "Solo",
     };
-  }, [sourceItem]);
+  }, [sourceCandidate, sourceItem]);
 
   const [form, setForm] = useState(seeded);
   const [tags, setTags] = useState<string[]>(
-    sourceItem ? [sourceItem.preferred_vibe] : [],
+    sourceCandidate?.tags ?? (sourceItem ? [sourceItem.preferred_vibe] : []),
   );
-  const [relatedInterests, setRelatedInterests] = useState<string[]>([]);
+  const [relatedInterests, setRelatedInterests] = useState<string[]>(
+    sourceCandidate?.related_interests ?? [],
+  );
   const [savedPlan, setSavedPlan] = useState<Plan | null>(null);
   const [message, setMessage] = useState<Message | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -13,52 +13,58 @@ import PlanCard from "../components/PlanCard";
 const examplePlans = [
   {
     id: 1,
-    title: "Spokane Indians Game",
+    title: "Pickleball Rotation",
     description:
-      "Low-pressure baseball hang. Show up, grab a beer, talk when you feel like it.",
-    date: "Saturday",
-    start_time: "5:00 PM",
+      "Casual doubles rotating between Comstock, Wunderground, and Coeur d'Alene Park.",
+    date: "Rotating Saturdays",
+    start_time: "9:00 AM",
     end_time: "",
-    location: "Avista Stadium",
-    cost: "$12-20",
-    kid_friendly: true,
+    location: "Comstock / Wunderground / Coeur d'Alene Park",
+    cost: "Free",
+    kid_friendly: false,
     capacity: 8,
     status: "published",
     visibility: "public",
-    tags: ["Sports", "Low-key"],
-    related_interests: ["Sports", "Breweries"],
+    tags: ["Fitness", "Sports"],
+    related_interests: ["Fitness", "Sports", "Casual meetups"],
     rsvp_count: 3,
+    viewer_status: null,
+    thread_available: false,
     created_at: "",
   },
   {
     id: 2,
-    title: "Saturday Morning Coffee",
+    title: "Trivia",
     description:
-      "Easy caffeine window before the weekend errands start multiplying.",
-    date: "Saturday",
-    start_time: "9:30 AM",
+      "Wednesday trivia at Brick West with a limited table size and clear end time.",
+    date: "Wednesdays",
+    start_time: "7:30 PM",
     end_time: "",
-    location: "Indaba Coffee",
-    cost: "$5-10",
+    location: "Brick West Brewing",
+    location_url:
+      "https://www.google.com/maps/search/?api=1&query=Brick+West+Brewing+Spokane+WA",
+    cost: "$8-20",
     kid_friendly: false,
-    capacity: 6,
+    capacity: 8,
     status: "published",
     visibility: "public",
-    tags: ["Coffee", "Small group"],
-    related_interests: ["Coffee", "Low-key hangouts"],
-    rsvp_count: 2,
+    tags: ["Trivia", "Breweries"],
+    related_interests: ["Trivia", "Breweries", "Casual meetups"],
+    rsvp_count: 4,
+    viewer_status: null,
+    thread_available: false,
     created_at: "",
   },
   {
     id: 3,
-    title: "Manito Park Loop",
+    title: "Kid-Friendly Sunday Rotation",
     description:
-      "Bring kids or don’t. Walk, talk, bail early if bedtime politics demand it.",
-    date: "Sunday",
+      "Manito, Jefferson, Ice Age, and Southside Aquatics during summer months.",
+    date: "Rotating Sundays",
     start_time: "10:00 AM",
     end_time: "",
-    location: "Manito Park",
-    cost: "Free",
+    location: "Manito / Jefferson / Ice Age / Southside Aquatics",
+    cost: "Free or admission",
     kid_friendly: true,
     capacity: null,
     status: "published",
@@ -66,19 +72,42 @@ const examplePlans = [
     tags: ["Outdoors", "Dad/kid"],
     related_interests: ["Outdoors", "Dad/kid activities"],
     rsvp_count: 4,
+    viewer_status: null,
+    thread_available: false,
+    created_at: "",
+  },
+  {
+    id: 4,
+    title: "3-on-3 Basketball Rotation",
+    description:
+      "Half-court run rotating between Thornton Murphy Park, Comstock Park, and Hooptown USA.",
+    date: "Rotating Fridays",
+    start_time: "6:30 PM",
+    end_time: "",
+    location: "Thornton Murphy / Comstock / Hooptown USA",
+    cost: "Free",
+    kid_friendly: false,
+    capacity: 12,
+    status: "published",
+    visibility: "public",
+    tags: ["Sports", "Fitness"],
+    related_interests: ["Sports", "Fitness", "Casual meetups"],
+    rsvp_count: 5,
+    viewer_status: null,
+    thread_available: false,
     created_at: "",
   },
 ];
 
 const steps = [
-  "Tell DadBuds when you’re free",
-  "DadBuds finds a local hang or creates one",
-  "DadBuds rallies the group",
-  "You show up if it works",
+  "DadBuds maintains a local calendar",
+  "Set your status or RSVP",
+  "Threads open for people who bookmark or attend",
+  "Attend when the plan works for you",
 ];
 
 const taglines = [
-  "Where you’ll actually get that beer.",
+  "Where you'll actually get that beer.",
   'No more "can I get your number dude?"',
   "The end of “we should hang sometime.”",
   "Nobody wants to text 12 people.",
@@ -89,19 +118,23 @@ const taglines = [
 const faqs = [
   {
     q: "Is this for work stuff?",
-    a: "No. It is for normal hangs, not elevator pitches.",
+    a: "No. DadBuds is for local social plans, not networking or sales.",
   },
   {
     q: "Do I have to know people already?",
-    a: "No. DadBuds can keep it small, local, and low-pressure.",
+    a: "No. You can bookmark, attend, or stay out of a plan without explaining yourself.",
   },
   {
     q: "Is SMS live yet?",
-    a: "Not yet. The MVP logs fake sends first, then Twilio can be added.",
+    a: "Not yet. For the Spokane pilot, message drafts stay in the admin dashboard before any real send.",
   },
 ];
 
-export default function HomePage() {
+type HomePageProps = {
+  joinPath?: string;
+};
+
+export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
   const [taglineIndex, setTaglineIndex] = useState(0);
 
   useEffect(() => {
@@ -136,7 +169,7 @@ export default function HomePage() {
               interest, and remind everyone.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link className="btn-primary" to="/signup">
+              <Link className="btn-primary" to={joinPath}>
                 Join Spokane Pilot
                 <ArrowRight size={18} />
               </Link>
@@ -160,8 +193,8 @@ export default function HomePage() {
           <div className="max-w-2xl">
             <h2 className="text-3xl font-black">How it works</h2>
             <p className="mt-3 text-ink/70">
-              Nobody wants to be the cruise director. DadBuds handles the first
-              awkward move.
+              Plans start as source-backed ideas or recurring activities. Once
+              they are concrete, they move to the Spokane calendar.
             </p>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-4">
@@ -185,15 +218,20 @@ export default function HomePage() {
           <div>
             <h2 className="text-3xl font-black">Spokane pilot</h2>
             <p className="mt-4 leading-7 text-ink/72">
-              Spokane has plenty to do. The hard part is knowing what’s worth
-              doing and who’s actually in.
+              Spokane has plenty to do. DadBuds turns recurring activities,
+              venue calendars, and local schedules into plans with dates,
+              locations, and RSVP state.
             </p>
             <p className="mt-4 leading-7 text-ink/72">
-              DadBuds is starting here because it’s the perfect middle ground:
-              enough events, enough dads, not enough social infrastructure.
+              The pilot starts with one night activity per week and one
+              kid-friendly park or playground session each weekend. Trivia,
+              sports calendars, basketball, pickleball, and local events fill
+              in the rest.
             </p>
             <div className="mt-6 grid gap-3 text-sm font-bold sm:grid-cols-3">
-              <span className="rounded-md bg-cream px-3 py-3">25 users</span>
+              <span className="rounded-md bg-cream px-3 py-3">
+                25 founding spots
+              </span>
               <span className="rounded-md bg-cream px-3 py-3">10 plans</span>
               <span className="rounded-md bg-cream px-3 py-3">5 meetups</span>
             </div>
@@ -203,7 +241,7 @@ export default function HomePage() {
               Core promise
             </p>
             <p className="mt-4 text-3xl font-black leading-tight">
-              The end of “we should hang sometime.”
+              The plan needs a date, place, and thread.
             </p>
           </div>
         </div>
@@ -213,9 +251,10 @@ export default function HomePage() {
         <div className="section-shell">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <h2 className="text-3xl font-black">Example plan cards</h2>
+              <h2 className="text-3xl font-black">Plan rhythm</h2>
               <p className="mt-3 text-ink/70">
-                Simple, specific, and easy to say yes, maybe, or no to.
+                The calendar is for plans with enough information to make a
+                decision: time, location, cost, audience, and thread access.
               </p>
             </div>
             <Link className="btn-secondary" to="/plans">
@@ -223,7 +262,7 @@ export default function HomePage() {
               <CalendarCheck size={18} />
             </Link>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {examplePlans.map((plan) => (
               <PlanCard key={plan.id} plan={plan} compact />
             ))}
@@ -234,14 +273,17 @@ export default function HomePage() {
       <section className="bg-sky py-16">
         <div className="section-shell grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
           <div>
-            <h2 className="text-3xl font-black">Join the first 25 dads</h2>
+            <h2 className="text-3xl font-black">
+              First 25 Spokane members get in free
+            </h2>
             <p className="mt-3 max-w-2xl leading-7 text-ink/72">
-              Sign up, tell DadBuds what works, and get looped into low-pressure
-              Spokane hangs without needing to become the group chat adult.
+              Join the Spokane pilot list. We’ll use the first group to prove
+              the calendar, standing plans, and event threads are useful before
+              opening it wider.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row md:justify-end">
-            <Link className="btn-primary" to="/signup">
+            <Link className="btn-primary" to={joinPath}>
               <CheckCircle2 size={18} />
               Join Spokane Pilot
             </Link>

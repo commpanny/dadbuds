@@ -7,7 +7,7 @@ export const interests = [
   "Fitness",
   "Coffee",
   "Dad/kid activities",
-  "Low-key hangouts",
+  "Casual meetups",
 ];
 
 export const availabilityOptions = [
@@ -22,14 +22,14 @@ export const availabilityOptions = [
 
 export const comfortLevels = [
   "Just notify me",
-  "Rally me into small groups",
+  "Invite me into small groups",
   "I’m open to new people",
 ];
 
 export const kidStatuses = ["Solo", "With kids", "Either"];
 
 export const vibeOptions = [
-  "Low-key",
+  "Casual",
   "Sports",
   "Coffee",
   "Outdoors",
@@ -38,4 +38,3 @@ export const vibeOptions = [
   "Small group",
   "Evening",
 ];
-

@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:shadow": "VITE_API_URL=http://127.0.0.1:8011 VITE_SHADOW_MODE=true vite --host 127.0.0.1 --port 5176",
+    "api:shadow": "DATABASE_URL=sqlite:///backend/dadbuds-shadow.db SHADOW_MODE=true .venv/bin/uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8011",
+    "seed:shadow": ".venv/bin/python scripts/seed_shadow_db.py",
+    "ingest": ".venv/bin/python scripts/ingest_events.py",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -1,25 +1,113 @@
-import { Send } from "lucide-react";
+import {
+  Beer,
+  Coffee,
+  Gamepad2,
+  Send,
+  Shield,
+  Trees,
+} from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type AvailabilityWindow } from "../lib/api";
 import { kidStatuses, vibeOptions } from "../lib/options";
 import { getLocalEmail, getLocalUserId } from "../lib/storage";
 
+type DadStatus = {
+  label: string;
+  description: string;
+  icon: typeof Beer;
+  start_time: string;
+  end_time: string;
+  kid_status: string;
+  preferred_vibe: string;
+};
+
+function todayValue() {
+  const now = new Date();
+  return [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+const dadStatuses: DadStatus[] = [
+  {
+    label: "Available tonight",
+    description: "Open to an evening plan if there is a clear time and place.",
+    icon: Beer,
+    start_time: "19:30",
+    end_time: "21:30",
+    kid_status: "Solo",
+    preferred_vibe: "Casual",
+  },
+  {
+    label: "Kid-friendly window",
+    description: "Available for a park, playground, walk, or family-friendly plan.",
+    icon: Trees,
+    start_time: "10:00",
+    end_time: "11:30",
+    kid_status: "With kids",
+    preferred_vibe: "Kid-friendly",
+  },
+  {
+    label: "Coffee window",
+    description: "Available for a shorter meetup earlier in the day.",
+    icon: Coffee,
+    start_time: "08:30",
+    end_time: "10:00",
+    kid_status: "Either",
+    preferred_vibe: "Coffee",
+  },
+  {
+    label: "Watching the game",
+    description: "Open to joining a sports watch plan.",
+    icon: Gamepad2,
+    start_time: "18:00",
+    end_time: "21:00",
+    kid_status: "Solo",
+    preferred_vibe: "Sports",
+  },
+  {
+    label: "Not available",
+    description: "Unavailable for plans, but still open to future notifications.",
+    icon: Shield,
+    start_time: "18:00",
+    end_time: "18:30",
+    kid_status: "Either",
+    preferred_vibe: "Just notify me",
+  },
+];
+
+const initialStatus = dadStatuses[0];
+
 const initialForm = {
-  date: "",
-  start_time: "",
-  end_time: "",
-  kid_status: kidStatuses[2],
-  preferred_vibe: vibeOptions[0],
+  date: todayValue(),
+  start_time: initialStatus.start_time,
+  end_time: initialStatus.end_time,
+  kid_status: initialStatus.kid_status,
+  preferred_vibe: initialStatus.preferred_vibe,
   notes: "",
   email: getLocalEmail(),
 };
 
 export default function AvailabilityPage() {
+  const [selectedStatus, setSelectedStatus] = useState(initialStatus.label);
   const [form, setForm] = useState(initialForm);
   const [created, setCreated] = useState<AvailabilityWindow | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  function chooseStatus(status: DadStatus) {
+    setSelectedStatus(status.label);
+    setForm({
+      ...form,
+      start_time: status.start_time,
+      end_time: status.end_time,
+      kid_status: status.kid_status,
+      preferred_vibe: status.preferred_vibe,
+    });
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,9 +115,11 @@ export default function AvailabilityPage() {
     setError(null);
 
     try {
+      const note = form.notes.trim();
       const availability = await api.createAvailability({
         ...form,
         user_id: getLocalUserId(),
+        notes: note ? `${selectedStatus}: ${note}` : selectedStatus,
       });
       setCreated(availability);
     } catch (err) {
@@ -43,12 +133,15 @@ export default function AvailabilityPage() {
     return (
       <section className="section-shell min-h-[calc(100vh-8rem)] py-12">
         <div className="mx-auto max-w-xl rounded-lg bg-cream p-8 shadow-soft">
-          <h1 className="text-3xl font-black">Nice.</h1>
+          <h1 className="text-3xl font-black">Status posted.</h1>
           <p className="mt-3 leading-7 text-ink/72">
-            DadBuds will look for a low-pressure plan.
+            This status helps with scheduling. It does not commit you to a plan.
           </p>
           <div className="mt-6 rounded-md bg-paper p-4 text-sm">
             <p className="font-bold">
+              {created.notes || selectedStatus}
+            </p>
+            <p className="mt-1 text-ink/70">
               {created.date} · {created.start_time}-{created.end_time}
             </p>
             <p className="mt-1 text-ink/70">
@@ -57,10 +150,10 @@ export default function AvailabilityPage() {
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link className="btn-primary" to="/plans">
-              See plan feed
+              Spokane Calendar
             </Link>
             <Link className="btn-secondary" to="/me">
-              View dashboard
+              Me
             </Link>
           </div>
         </div>
@@ -71,14 +164,39 @@ export default function AvailabilityPage() {
   return (
     <section className="section-shell py-10">
       <div className="max-w-2xl">
-        <h1 className="text-4xl font-black">When are you free?</h1>
+        <h1 className="text-4xl font-black">Set your status</h1>
         <p className="mt-3 leading-7 text-ink/72">
-          Give DadBuds a window. Admins can turn it into a suggested hang or
-          match it to an existing plan.
+          Share your current availability. DadBuds can use it to match you with
+          existing plans or identify overlap for future plans.
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-2xl space-y-5">
+      <form onSubmit={onSubmit} className="mt-8 max-w-4xl space-y-5">
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {dadStatuses.map((status) => {
+            const Icon = status.icon;
+            const selected = selectedStatus === status.label;
+            return (
+              <button
+                className={`rounded-md border p-4 text-left transition ${
+                  selected
+                    ? "border-moss bg-moss/12 shadow-[2px_2px_0_rgba(78,117,87,0.25)]"
+                    : "border-pencil/15 bg-cream hover:border-moss/40"
+                }`}
+                key={status.label}
+                onClick={() => chooseStatus(status)}
+                type="button"
+              >
+                <Icon size={22} className={selected ? "text-moss" : "text-ink/55"} />
+                <p className="mt-3 font-black">{status.label}</p>
+                <p className="mt-1 text-sm leading-6 text-ink/65">
+                  {status.description}
+                </p>
+              </button>
+            );
+          })}
+        </section>
+
         <div className="card grid gap-4 sm:grid-cols-2">
           {!getLocalUserId() ? (
             <label className="space-y-2 sm:col-span-2">
@@ -95,7 +213,7 @@ export default function AvailabilityPage() {
             </label>
           ) : null}
           <label className="space-y-2">
-            <span className="label">Date</span>
+            <span className="label">Applies to</span>
             <input
               required
               type="date"
@@ -106,7 +224,7 @@ export default function AvailabilityPage() {
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="space-y-2">
-              <span className="label">Start</span>
+              <span className="label">From</span>
               <input
                 required
                 type="time"
@@ -118,7 +236,7 @@ export default function AvailabilityPage() {
               />
             </label>
             <label className="space-y-2">
-              <span className="label">End</span>
+              <span className="label">Until</span>
               <input
                 required
                 type="time"
@@ -145,7 +263,7 @@ export default function AvailabilityPage() {
             </select>
           </label>
           <label className="space-y-2">
-            <span className="label">Preferred vibe</span>
+            <span className="label">Vibe</span>
             <select
               className="input"
               value={form.preferred_vibe}
@@ -159,10 +277,10 @@ export default function AvailabilityPage() {
             </select>
           </label>
           <label className="space-y-2 sm:col-span-2">
-            <span className="label">Notes</span>
+            <span className="label">Optional note</span>
             <textarea
-              className="input min-h-28"
-              placeholder="Solo this time, kid nap window, near North Spokane..."
+              className="input min-h-24"
+              placeholder="Neighborhood, constraints, kid situation, or other useful context."
               value={form.notes}
               onChange={(event) => setForm({ ...form, notes: event.target.value })}
             />
@@ -176,7 +294,7 @@ export default function AvailabilityPage() {
         ) : null}
         <button className="btn-primary" disabled={saving}>
           <Send size={18} />
-          {saving ? "Submitting..." : "Submit availability"}
+          {saving ? "Posting..." : "Post status"}
         </button>
       </form>
     </section>

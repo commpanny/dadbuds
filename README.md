@@ -46,7 +46,6 @@ Admin pages and admin API routes require a shared admin token for the pilot.
 
 - Backend: set `ADMIN_TOKEN` before starting the API.
 - Frontend: open `/admin` and enter that token in the browser gate.
-- Optional local convenience: set `VITE_ADMIN_TOKEN` for a dev-only preloaded token. Do not use `VITE_ADMIN_TOKEN` as a real production secret because Vite exposes it to the browser bundle.
 
 Protected admin API routes include user listing, all-availability listing, availability status updates, plan creation, draft plan listing, all-RSVP listing, message generation, message listing, message creation, and fake-send logging.
 

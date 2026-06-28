@@ -7,4 +7,7 @@ dist/
 __pycache__/
 *.pyc
 backend/dadbuds.db
+backend/dadbuds-shadow.db
+backend/data/ingested_events.json
 .DS_Store
+*.xcf

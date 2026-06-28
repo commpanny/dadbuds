@@ -1,4 +1,4 @@
-import { MessageCircle, Send, UserRound } from "lucide-react";
+import { MessageCircle, Send, ShieldCheck, UserRound } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import FieldGroup from "../components/FieldGroup";
@@ -20,6 +20,7 @@ const initialForm = {
   discord_username: "",
   comfort_level: comfortLevels[1],
   sms_opt_in: false,
+  standard_acknowledged: false,
 };
 
 export default function SignupPage() {
@@ -29,6 +30,7 @@ export default function SignupPage() {
     [],
   );
   const [createdUser, setCreatedUser] = useState<User | null>(null);
+  const [recoveredExisting, setRecoveredExisting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -45,8 +47,22 @@ export default function SignupPage() {
       });
       saveLocalUser(user.id, user.email);
       setCreatedUser(user);
+      setRecoveredExisting(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Signup failed.");
+      const message = err instanceof Error ? err.message : "Signup failed.";
+      if (message.includes("already exists") && form.email.trim()) {
+        try {
+          const user = await api.findUserByEmail(form.email.trim());
+          saveLocalUser(user.id, user.email);
+          setCreatedUser(user);
+          setRecoveredExisting(true);
+          return;
+        } catch {
+          setError(message);
+        }
+      } else {
+        setError(message);
+      }
     } finally {
       setSaving(false);
     }
@@ -60,16 +76,19 @@ export default function SignupPage() {
             <UserRound size={28} />
           </div>
           <h1 className="mt-6 text-3xl font-black">
-            You’re in, {createdUser.name}.
+            {recoveredExisting
+              ? `Welcome back, ${createdUser.name}.`
+              : `You’re in, ${createdUser.name}.`}
           </h1>
           <p className="mt-3 leading-7 text-ink/72">
-            DadBuds saved your Spokane pilot profile. Next best move: tell us
-            the first window that might work.
+            {recoveredExisting
+              ? "DadBuds found your existing Spokane pilot profile and reconnected this browser."
+              : "DadBuds saved your Spokane pilot profile. Next best move: tell us the first window that might work."}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link className="btn-primary" to="/free">
               <Send size={18} />
-              Add availability
+              Set status
             </Link>
             <a
               className="btn-secondary"
@@ -247,6 +266,34 @@ export default function SignupPage() {
                   after real SMS is enabled. For now this records consent only;
                   no real Twilio sends happen yet.
                 </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-start gap-3 rounded-md border border-moss/25 bg-moss/10 p-3 text-sm">
+              <input
+                required
+                type="checkbox"
+                className="mt-1 h-4 w-4 accent-moss"
+                checked={form.standard_acknowledged}
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+                    standard_acknowledged: event.target.checked,
+                  })
+                }
+              />
+              <span>
+                <strong className="inline-flex items-center gap-2">
+                  <ShieldCheck size={16} />
+                  Don’t Be a Dick
+                </strong>
+                <span className="block pt-1 text-ink/65">
+                  Keep DadBuds practical, welcoming, and respectful. No
+                  harassment, pickup-artist behavior, bigotry, culture-war bait,
+                  or attempts to dominate the group.
+                </span>
+                <Link className="mt-2 block font-bold underline" to="/standard">
+                  Read the community standard
+                </Link>
               </span>
             </label>
             <p className="text-xs leading-5 text-ink/55">

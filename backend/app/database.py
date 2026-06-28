@@ -20,6 +20,18 @@ def normalize_database_url(url: str) -> str:
 
 DATABASE_URL = normalize_database_url(raw_database_url)
 
+app_env = os.getenv("APP_ENV", "development").strip().lower()
+if (
+    app_env == "production"
+    and DATABASE_URL.startswith("sqlite")
+    and os.getenv("ALLOW_SQLITE_IN_PRODUCTION", "false").strip().lower() != "true"
+):
+    raise RuntimeError(
+        "SQLite is disabled in production. Use a managed Postgres DATABASE_URL "
+        "with TLS enabled, or explicitly set ALLOW_SQLITE_IN_PRODUCTION=true "
+        "for a private non-production instance."
+    )
+
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 

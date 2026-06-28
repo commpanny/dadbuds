@@ -1,7 +1,7 @@
 const ADMIN_TOKEN_STORAGE_KEY = "dadbuds_admin_token";
 
 export function getConfiguredAdminToken() {
-  return import.meta.env.VITE_ADMIN_TOKEN ?? "";
+  return "";
 }
 
 export function getStoredAdminToken() {
@@ -10,7 +10,7 @@ export function getStoredAdminToken() {
 }
 
 export function getAdminToken() {
-  return getStoredAdminToken() || getConfiguredAdminToken();
+  return getStoredAdminToken();
 }
 
 export function saveAdminToken(token: string) {

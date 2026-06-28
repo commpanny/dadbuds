@@ -23,7 +23,8 @@ export default function TermsPage() {
         </TermsSection>
         <TermsSection title="Plans can change">
           Pilot plans may be edited, cancelled, under-attended, or manually
-          adjusted. RSVP counts are coordination signals, not guarantees.
+          adjusted. RSVP counts help with coordination, but they are not
+          guarantees.
         </TermsSection>
         <TermsSection title="Admin operations">
           Admins can review profiles, availability, RSVPs, plan drafts, and

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Join DadBuds | Spokane beta</title>
+
+    <meta
+      name="description"
+      content="Join the DadBuds Spokane beta or request DadBuds in your city."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/dadbuds-favicon.png"
+    />
+
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+
+  <body>
+    <main class="join-page">
+      <section class="join-grid">
+        <div class="join-copy">
+          <div class="join-logo">
+            <img src="/assets/dadbuds-logo.png" alt="DadBuds" />
+          </div>
+
+          <h1>
+            Join Spokane beta
+            <span class="headline-note">
+              Or request DadBuds in your ZIP code.
+            </span>
+          </h1>
+        </div>
+
+        <form
+          id="dadbuds-signup-form"
+          name="dadbuds-spokane-beta"
+          method="POST"
+          action="/success/"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="signup-form"
+        >
+          <input
+            type="hidden"
+            name="form-name"
+            value="dadbuds-spokane-beta"
+          />
+
+          <input type="hidden" name="utm_source" />
+          <input type="hidden" name="utm_medium" />
+          <input type="hidden" name="utm_campaign" />
+          <input type="hidden" name="utm_content" />
+          <input type="hidden" name="utm_term" />
+          <input type="hidden" name="ref" />
+
+          <input
+            type="hidden"
+            name="source_url"
+            value="https://dadbuds.lol/join/"
+          />
+
+          <div class="hidden" hidden aria-hidden="true">
+            <input
+              name="bot-field"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+
+          <label>
+            <span>Email *</span>
+            <input
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              required
+            />
+          </label>
+
+          <label>
+            <span>ZIP code *</span>
+            <input
+              name="zip"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              pattern="[0-9]{5}"
+              maxlength="5"
+              placeholder="99201"
+              required
+            />
+          </label>
+
+          <label class="checkbox">
+            <input
+              name="spokane_beta"
+              type="checkbox"
+              value="yes"
+              checked
+            />
+            <span>Sign up for Spokane beta</span>
+          </label>
+
+          <label class="checkbox">
+            <input
+              name="zip_code_interest"
+              type="checkbox"
+              value="yes"
+              checked
+            />
+            <span>Bring DadBuds to my ZIP code</span>
+          </label>
+
+          <label>
+            <span>Referral code</span>
+            <input
+              name="referral_code"
+              value="BOYSOFSUMMER"
+              placeholder="BOYSOFSUMMER"
+            />
+          </label>
+
+          <label class="checkbox">
+            <input
+              name="marketing_consent"
+              type="checkbox"
+              value="yes"
+            />
+            <span>
+              Send me DadBuds beta updates, local event invitations, and
+              occasional product news. I can unsubscribe at any time.
+            </span>
+          </label>
+
+          <button type="submit">
+            Join
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <strong>DadBuds.lol</strong>
+
+      <nav>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <span>Spokane beta</span>
+      </nav>
+    </footer>
+
+    <script>
+      (() => {
+        const form = document.getElementById("dadbuds-signup-form");
+
+        if (!form) {
+          return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+
+        const trackedFields = [
+          "utm_source",
+          "utm_medium",
+          "utm_campaign",
+          "utm_content",
+          "utm_term",
+          "ref"
+        ];
+
+        trackedFields.forEach((fieldName) => {
+          const field = form.elements.namedItem(fieldName);
+          const value = params.get(fieldName);
+
+          if (field instanceof HTMLInputElement && value) {
+            field.value = value;
+          }
+        });
+
+        const referralCode = form.elements.namedItem("referral_code");
+        const referralFromUrl =
+          params.get("referral_code") || params.get("ref");
+
+        if (
+          referralCode instanceof HTMLInputElement &&
+          referralFromUrl
+        ) {
+          referralCode.value = referralFromUrl;
+        }
+
+        const sourceUrl = form.elements.namedItem("source_url");
+
+        if (sourceUrl instanceof HTMLInputElement) {
+          sourceUrl.value = window.location.href;
+        }
+      })();
+    </script>
+  </body>
+</html>
+

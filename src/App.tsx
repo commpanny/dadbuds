@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import AdminGate from "./components/AdminGate";
 import Layout from "./components/Layout";
 import AdminAvailability from "./pages/AdminAvailability";
@@ -7,11 +7,17 @@ import AdminMessages from "./pages/AdminMessages";
 import AdminNewPlan from "./pages/AdminNewPlan";
 import AdminUsers from "./pages/AdminUsers";
 import AvailabilityPage from "./pages/AvailabilityPage";
+import CommunityStandardPage from "./pages/CommunityStandardPage";
+import ConversationPage from "./pages/ConversationPage";
+import EventsPage from "./pages/EventsPage";
 import HomePage from "./pages/HomePage";
+import JoinSignupPage from "./pages/JoinSignupPage";
+import JoinThanksPage from "./pages/JoinThanksPage";
 import MePage from "./pages/MePage";
 import PlansPage from "./pages/PlansPage";
 import PrivacyPage from "./pages/PrivacyPage";
-import SignupPage from "./pages/SignupPage";
+import SigninPage from "./pages/SigninPage";
+import SimulationPage from "./pages/SimulationPage";
 import TermsPage from "./pages/TermsPage";
 
 export default function App() {
@@ -19,10 +25,18 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/join" element={<HomePage />} />
+        <Route path="/join/signup" element={<JoinSignupPage />} />
+        <Route path="/join/thanks" element={<JoinThanksPage />} />
+        <Route path="/signup" element={<Navigate to="/join/signup" replace />} />
+        <Route path="/signin" element={<SigninPage />} />
         <Route path="/plans" element={<PlansPage />} />
+        <Route path="/plans/:planId/thread" element={<ConversationPage />} />
+        <Route path="/events" element={<EventsPage />} />
         <Route path="/free" element={<AvailabilityPage />} />
         <Route path="/me" element={<MePage />} />
+        <Route path="/sim" element={<SimulationPage />} />
+        <Route path="/standard" element={<CommunityStandardPage />} />
         <Route
           path="/admin"
           element={

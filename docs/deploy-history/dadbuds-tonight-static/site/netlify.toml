@@ -1,0 +1,22 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[redirects]]
+  from = "/"
+  to = "/join/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/join"
+  to = "/join/"
+  status = 302
+
+[[redirects]]
+  from = "/signup"
+  to = "/join/"
+  status = 302

@@ -6,8 +6,7 @@ export default function PrivacyPage() {
         <h1 className="mt-2 text-4xl font-black">Privacy notice</h1>
         <p className="mt-4 leading-7 text-ink/72">
           DadBuds is a small manual pilot. We collect only the information
-          needed to coordinate low-pressure local plans and learn whether the
-          idea is useful.
+          needed to coordinate local plans and learn whether the idea is useful.
         </p>
       </div>
 
