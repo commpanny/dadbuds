@@ -29,6 +29,12 @@ const visibleNavItems = fullAppEnabled
 export default function Layout() {
   const [open, setOpen] = useState(false);
 
+  function goHome() {
+    setOpen(false);
+    window.history.pushState(null, "", "/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <div className="min-h-screen bg-paper text-ink">
       {shadowMode ? (
@@ -38,7 +44,7 @@ export default function Layout() {
       ) : null}
       <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/95 backdrop-blur">
         <div className="section-shell flex min-h-16 items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3" onClick={goHome}>
             <img
               src="/dadbuds-logo.png"
               alt="DadBuds"

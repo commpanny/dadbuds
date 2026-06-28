@@ -156,7 +156,7 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
   return (
     <div>
       <section className="relative overflow-hidden bg-cream">
-        <div className="section-shell relative grid min-h-[calc(100vh-4rem)] items-center gap-10 py-14 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="section-shell relative grid min-h-[calc(100vh-10rem)] items-center gap-10 py-10 md:grid-cols-[1.1fr_0.9fr]">
           <div className="max-w-2xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-md bg-moss/12 px-3 py-2 text-sm font-bold text-moss">
               <Sparkles size={17} />
@@ -196,7 +196,7 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
         </div>
       </section>
 
-      <section id="how-it-works" className="bg-cream py-16">
+      <section id="how-it-works" className="scroll-mt-20 bg-cream py-10">
         <div className="section-shell">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-black">How it works</h2>
