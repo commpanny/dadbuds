@@ -35,6 +35,10 @@ export default function JoinSignupPage() {
   const [captured, setCaptured] = useState(
     searchParams.get("captured") === "1",
   );
+  const fullAppEnabled =
+    import.meta.env.DEV ||
+    import.meta.env.VITE_SHADOW_MODE === "true" ||
+    import.meta.env.VITE_FULL_APP === "true";
 
   const defaults = useMemo(() => {
     const referralCode =
@@ -71,10 +75,12 @@ export default function JoinSignupPage() {
             invites.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link className="btn-primary" to="/plans">
-              Spokane calendar
-              <CalendarDays size={18} />
-            </Link>
+            {fullAppEnabled ? (
+              <Link className="btn-primary" to="/plans">
+                Spokane calendar
+                <CalendarDays size={18} />
+              </Link>
+            ) : null}
             <Link className="btn-secondary" to="/join">
               Back to landing
             </Link>
@@ -252,15 +258,21 @@ export default function JoinSignupPage() {
           </button>
 
           <p className="mt-4 text-xs leading-5 text-ink/55">
-            By joining the pilot list, you agree to the DadBuds{" "}
-            <Link className="font-bold underline" to="/terms">
-              terms
-            </Link>{" "}
-            and{" "}
-            <Link className="font-bold underline" to="/privacy">
-              privacy notice
-            </Link>
-            .
+            {fullAppEnabled ? (
+              <>
+                By joining the pilot list, you agree to the DadBuds{" "}
+                <Link className="font-bold underline" to="/terms">
+                  terms
+                </Link>{" "}
+                and{" "}
+                <Link className="font-bold underline" to="/privacy">
+                  privacy notice
+                </Link>
+                .
+              </>
+            ) : (
+              "By joining the pilot list, you agree that DadBuds may use this intake to follow up about the Spokane beta."
+            )}
           </p>
         </form>
       </div>

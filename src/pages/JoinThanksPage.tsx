@@ -1,4 +1,4 @@
-import { CalendarDays, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function JoinThanksPage() {
@@ -20,11 +20,7 @@ export default function JoinThanksPage() {
           </p>
         </div>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link className="btn-primary" to="/plans">
-            Spokane calendar
-            <CalendarDays size={18} />
-          </Link>
-          <Link className="btn-secondary" to="/join">
+          <Link className="btn-primary" to="/join">
             Back to landing
           </Link>
         </div>

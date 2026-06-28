@@ -136,6 +136,10 @@ type HomePageProps = {
 
 export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
   const [taglineIndex, setTaglineIndex] = useState(0);
+  const fullAppEnabled =
+    import.meta.env.DEV ||
+    import.meta.env.VITE_SHADOW_MODE === "true" ||
+    import.meta.env.VITE_FULL_APP === "true";
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -247,28 +251,30 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
         </div>
       </section>
 
-      <section className="bg-cream py-16">
-        <div className="section-shell">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <h2 className="text-3xl font-black">Plan rhythm</h2>
-              <p className="mt-3 text-ink/70">
-                The calendar is for plans with enough information to make a
-                decision: time, location, cost, audience, and thread access.
-              </p>
+      {fullAppEnabled ? (
+        <section className="bg-cream py-16">
+          <div className="section-shell">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <h2 className="text-3xl font-black">Plan rhythm</h2>
+                <p className="mt-3 text-ink/70">
+                  The calendar is for plans with enough information to make a
+                  decision: time, location, cost, audience, and thread access.
+                </p>
+              </div>
+              <Link className="btn-secondary" to="/plans">
+                View plan feed
+                <CalendarCheck size={18} />
+              </Link>
             </div>
-            <Link className="btn-secondary" to="/plans">
-              View plan feed
-              <CalendarCheck size={18} />
-            </Link>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {examplePlans.map((plan) => (
+                <PlanCard key={plan.id} plan={plan} compact />
+              ))}
+            </div>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {examplePlans.map((plan) => (
-              <PlanCard key={plan.id} plan={plan} compact />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="bg-sky py-16">
         <div className="section-shell grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
@@ -287,15 +293,17 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
               <CheckCircle2 size={18} />
               Join Spokane Pilot
             </Link>
-            <a
-              className="btn-secondary"
-              href="https://discord.gg/qWEp9bTd"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <MessageCircle size={18} />
-              Discord
-            </a>
+            {fullAppEnabled ? (
+              <a
+                className="btn-secondary"
+                href="https://discord.gg/qWEp9bTd"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <MessageCircle size={18} />
+                Discord
+              </a>
+            ) : null}
           </div>
         </div>
       </section>

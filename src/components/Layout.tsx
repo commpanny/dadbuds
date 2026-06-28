@@ -11,14 +11,20 @@ const navItems = [
 ];
 
 const shadowMode = import.meta.env.VITE_SHADOW_MODE === "true";
+const fullAppEnabled =
+  import.meta.env.DEV ||
+  shadowMode ||
+  import.meta.env.VITE_FULL_APP === "true";
 const internalNavItems =
-  import.meta.env.DEV || shadowMode
+  fullAppEnabled
     ? [
         { to: "/sim", label: "Sim" },
         { to: "/admin", label: "Admin" },
       ]
     : [];
-const visibleNavItems = [...navItems, ...internalNavItems];
+const visibleNavItems = fullAppEnabled
+  ? [...navItems, ...internalNavItems]
+  : [];
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
@@ -60,18 +66,22 @@ export default function Layout() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <a
-              className="btn-secondary"
-              href="https://discord.gg/qWEp9bTd"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <MessageCircle size={18} />
-              Discord
-            </a>
-            <Link className="btn-secondary" to="/signin">
-              Sign in
-            </Link>
+            {fullAppEnabled ? (
+              <>
+                <a
+                  className="btn-secondary"
+                  href="https://discord.gg/qWEp9bTd"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <MessageCircle size={18} />
+                  Discord
+                </a>
+                <Link className="btn-secondary" to="/signin">
+                  Sign in
+                </Link>
+              </>
+            ) : null}
             <Link className="btn-primary" to="/join/signup">
               <UserRound size={18} />
               Join Spokane Pilot
@@ -100,13 +110,15 @@ export default function Layout() {
                   {item.label}
                 </NavLink>
               ))}
-              <Link
-                className="btn-secondary"
-                to="/signin"
-                onClick={() => setOpen(false)}
-              >
-                Sign in
-              </Link>
+              {fullAppEnabled ? (
+                <Link
+                  className="btn-secondary"
+                  to="/signin"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign in
+                </Link>
+              ) : null}
               <Link
                 className="btn-primary"
                 to="/join/signup"
@@ -129,15 +141,19 @@ export default function Layout() {
         <div className="section-shell flex flex-col justify-between gap-4 text-sm md:flex-row md:items-center">
           <p className="font-semibold">DadBuds.lol · Spokane pilot</p>
           <div className="flex flex-wrap gap-4 text-cream/70">
-            <Link className="hover:text-cream" to="/privacy">
-              Privacy
-            </Link>
-            <Link className="hover:text-cream" to="/terms">
-              Terms
-            </Link>
-            <Link className="hover:text-cream" to="/standard">
-              Don’t Be a Dick
-            </Link>
+            {fullAppEnabled ? (
+              <>
+                <Link className="hover:text-cream" to="/privacy">
+                  Privacy
+                </Link>
+                <Link className="hover:text-cream" to="/terms">
+                  Terms
+                </Link>
+                <Link className="hover:text-cream" to="/standard">
+                  Don’t Be a Dick
+                </Link>
+              </>
+            ) : null}
             <span>Local plans with clear details.</span>
           </div>
         </div>
