@@ -19,9 +19,9 @@ type Lead = {
   email: string;
   zip: string;
   referral_code: string;
-  spokane_beta: boolean;
-  zip_code_interest: boolean;
+  invite_near_zip: boolean;
   crew_interests: string[];
+  crew_suggestion: string;
   marketing_consent: boolean;
   source_url: string;
   utm: Record<string, string>;
@@ -88,9 +88,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     email,
     zip,
     referral_code: text(form, "referral_code") || "BOYSOFSUMMER",
-    spokane_beta: checked(form, "spokane_beta"),
-    zip_code_interest: checked(form, "zip_code_interest"),
-    crew_interests: selected(form, "crew_interests"),
+    invite_near_zip: checked(form, "invite_near_zip"),
+    crew_interests: [
+      ...selected(form, "crews"),
+      ...selected(form, "crew_interests"),
+    ],
+    crew_suggestion: text(form, "crew_suggestion"),
     marketing_consent: checked(form, "marketing_consent"),
     source_url: text(form, "source_url"),
     utm: Object.fromEntries(

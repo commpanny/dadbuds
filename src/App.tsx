@@ -8,7 +8,6 @@ import JoinSignupPage from "./pages/JoinSignupPage";
 import JoinThanksPage from "./pages/JoinThanksPage";
 
 const fullAppEnabled =
-  import.meta.env.DEV ||
   import.meta.env.VITE_SHADOW_MODE === "true" ||
   import.meta.env.VITE_FULL_APP === "true";
 const AdminGate = fullAppEnabled

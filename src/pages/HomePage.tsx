@@ -47,9 +47,8 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
               {taglines[taglineIndex]}
             </p>
             <p className="mt-6 max-w-xl text-lg leading-8 text-ink/75">
-              DadBuds helps busy dads make actual plans with actual people. Tell
-              us when you’re free. We’ll find local stuff, rally the buds, track
-              interest, and remind everyone.
+              Pick any crews you would check. See the Spokane plans that fit.
+              No cold group text, no “we should hang sometime.”
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" to={joinPath}>
@@ -80,8 +79,8 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
             </div>
             <h2 className="mt-4 text-3xl font-black">Find your people first.</h2>
             <p className="mt-3 leading-7 text-ink/72">
-              Crews are interest groups that help DadBuds route plans to people
-              who might actually care.
+              Crews are standing interest groups. Pick the ones you would
+              actually check.
             </p>
           </div>
 

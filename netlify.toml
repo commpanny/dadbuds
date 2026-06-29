@@ -1,6 +1,34 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:landing"
   publish = "dist"
+
+[context.production]
+  command = "npm run build:landing"
+
+[context.production.environment]
+  VITE_FULL_APP = "false"
+  VITE_SHADOW_MODE = "false"
+
+[context.deploy-preview]
+  command = "npm run build:landing"
+
+[context.deploy-preview.environment]
+  VITE_FULL_APP = "false"
+  VITE_SHADOW_MODE = "false"
+
+[context.branch-deploy]
+  command = "npm run build:landing"
+
+[context.branch-deploy.environment]
+  VITE_FULL_APP = "false"
+  VITE_SHADOW_MODE = "false"
+
+[context.shadow]
+  command = "npm run build:shadow"
+
+[context.shadow.environment]
+  VITE_FULL_APP = "true"
+  VITE_SHADOW_MODE = "true"
 
 [[headers]]
   for = "/*"

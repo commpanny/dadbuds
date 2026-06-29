@@ -19,6 +19,9 @@ const trackedFields = [
   "ref",
 ] as const;
 
+const CREW_SELECTION_LIMIT = 6;
+const validCrewIds = new Set(crewPreviews.map((crew) => crew.id));
+
 function firstParam(params: URLSearchParams, ...keys: string[]) {
   for (const key of keys) {
     const value = params.get(key);
@@ -31,13 +34,37 @@ function isLocalHost() {
   return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
 }
 
+function getInitialCrewIds(params: URLSearchParams) {
+  return Array.from(new Set(params.getAll("crew")))
+    .filter((crewId) => validCrewIds.has(crewId))
+    .slice(0, CREW_SELECTION_LIMIT);
+}
+
+function getNextSaturdayLabel(date = new Date()) {
+  const saturday = 6;
+  const daysUntilSaturday = (saturday - date.getDay() + 7) % 7;
+  const nextSaturday = new Date(date);
+  nextSaturday.setDate(date.getDate() + daysUntilSaturday);
+
+  return nextSaturday.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export default function JoinSignupPage() {
   const [searchParams] = useSearchParams();
+  const nextSaturdayLabel = getNextSaturdayLabel();
   const [captured, setCaptured] = useState(
     searchParams.get("captured") === "1",
   );
+  const [selectedCrewIds, setSelectedCrewIds] = useState<string[]>(() =>
+    getInitialCrewIds(searchParams),
+  );
+  const [crewLimitMessage, setCrewLimitMessage] = useState("");
+  const [showReferral, setShowReferral] = useState(false);
   const fullAppEnabled =
-    import.meta.env.DEV ||
     import.meta.env.VITE_SHADOW_MODE === "true" ||
     import.meta.env.VITE_FULL_APP === "true";
 
@@ -56,6 +83,25 @@ export default function JoinSignupPage() {
       ),
     };
   }, [searchParams]);
+  const [referralCode, setReferralCode] = useState(defaults.referralCode);
+
+  function toggleCrew(crewId: string) {
+    if (selectedCrewIds.includes(crewId)) {
+      setCrewLimitMessage("");
+      setSelectedCrewIds((current) => current.filter((id) => id !== crewId));
+      return;
+    }
+
+    if (selectedCrewIds.length >= CREW_SELECTION_LIMIT) {
+      setCrewLimitMessage(
+        "You can start with 6. You’ll be able to add more after signup.",
+      );
+      return;
+    }
+
+    setCrewLimitMessage("");
+    setSelectedCrewIds((current) => [...current, crewId]);
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     if (!isLocalHost()) return;
@@ -72,8 +118,7 @@ export default function JoinSignupPage() {
           </div>
           <h1 className="mt-6 text-3xl font-black">You’re on the list.</h1>
           <p className="mt-3 leading-7 text-ink/72">
-            DadBuds will use this for Spokane pilot updates and local event
-            invites.
+            DadBuds will send Spokane pilot updates and local event invites.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             {fullAppEnabled ? (
@@ -99,15 +144,11 @@ export default function JoinSignupPage() {
             <div className="flex h-12 w-12 items-center justify-center rounded-md bg-amber/35 text-pencil">
               <Sparkles size={24} />
             </div>
-            <h1 className="mt-5 text-4xl font-black">Join Spokane beta</h1>
-            <p className="mt-3 text-lg font-bold text-brick">
-              The pilot is free. Get in the car.
-            </p>
+            <h1 className="mt-5 text-4xl font-black">Join Spokane pilot</h1>
             <p className="mt-5 leading-7 text-ink/72">
-              DadBuds starts with enough local density to make plans useful. The
-              pilot uses your ZIP code and email to understand where to launch,
-              what to invite you to, and whether Spokane has enough dads ready
-              to show up.
+              We are starting with Spokane plans and South Hill-friendly crews.
+              Email gets you updates. ZIP code helps us keep plans close enough
+              to be useful.
             </p>
             <p className="mt-3 text-sm font-bold text-ink/62">
               Not in Spokane? Use the same form to request DadBuds in your ZIP
@@ -115,20 +156,43 @@ export default function JoinSignupPage() {
             </p>
           </div>
 
+          <Link
+            className="btn-secondary w-full justify-between bg-paper"
+            to="/how-it-works"
+          >
+            See how it works
+            <ArrowRight size={18} />
+          </Link>
+
           <div className="rounded-lg border border-moss/25 bg-moss/10 p-6">
             <div className="flex items-center gap-2 text-moss">
               <MapPin size={20} />
-              <h2 className="text-xl font-black">Standing event</h2>
+              <h2 className="text-xl font-black">Show up this Saturday</h2>
             </div>
             <p className="mt-4 text-2xl font-black leading-tight">
               Upper Manito Playground
             </p>
-            <p className="mt-2 text-lg font-bold text-ink/72">
-              Sundays, 10:00 AM-noon
+            <p className="mt-2 text-lg font-bold text-ink/78">
+              {nextSaturdayLabel}
             </p>
+            <p className="mt-1 text-lg font-bold text-ink/78">11:00 AM</p>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-black uppercase text-moss">
+              <span className="rounded-sm bg-cream px-2 py-1">
+                Dad + kid friendly
+              </span>
+              <span className="rounded-sm bg-cream px-2 py-1">
+                Drop in anytime
+              </span>
+              <span className="rounded-sm bg-cream px-2 py-1">
+                No signup required
+              </span>
+            </div>
             <p className="mt-4 leading-7 text-ink/72">
-              No signup required. This is the live, recurring DadBuds park hang:
-              show up if it works and leave when you need to leave.
+              No signup required. Show up if it works and leave when you need
+              to.
+            </p>
+            <p className="mt-2 text-sm font-bold text-ink/62">
+              Repeats every Saturday
             </p>
             <a
               className="btn-secondary mt-5 inline-flex"
@@ -147,11 +211,11 @@ export default function JoinSignupPage() {
           className="rounded-lg border border-pencil/15 bg-paper p-6 shadow-soft"
           data-netlify="true"
           method="POST"
-          name="dadbuds-spokane-beta"
+          name="dadbuds-spokane-pilot"
           netlify-honeypot="bot-field"
           onSubmit={onSubmit}
         >
-          <input name="form-name" type="hidden" value="dadbuds-spokane-beta" />
+          <input name="form-name" type="hidden" value="dadbuds-spokane-pilot" />
           {trackedFields.map((field) => (
             <input
               key={field}
@@ -170,11 +234,10 @@ export default function JoinSignupPage() {
               <ShieldCheck size={22} />
             </div>
             <div>
-              <h2 className="text-2xl font-black">Quick intake</h2>
+              <h2 className="text-2xl font-black">Where should we start?</h2>
               <p className="mt-2 text-sm leading-6 text-ink/66">
-                This does not create a full profile. It gives DadBuds enough to
-                invite you when there is a relevant Spokane plan or enough
-                interest in your ZIP code.
+                Leave an email, your ZIP, and the first crews you would
+                actually check.
               </p>
             </div>
           </div>
@@ -213,57 +276,100 @@ export default function JoinSignupPage() {
               <input
                 className="mt-1 h-4 w-4 accent-moss"
                 defaultChecked
-                name="spokane_beta"
+                name="invite_near_zip"
                 type="checkbox"
                 value="yes"
               />
-              <span>Sign up for Spokane beta</span>
+              <span>Invite me to DadBuds plans near this ZIP code</span>
             </label>
-            <label className="flex cursor-pointer items-start gap-3 rounded-md border border-pencil/15 bg-cream p-3 text-sm font-bold">
-              <input
-                className="mt-1 h-4 w-4 accent-moss"
-                defaultChecked
-                name="zip_code_interest"
-                type="checkbox"
-                value="yes"
-              />
-              <span>Bring DadBuds to my ZIP code</span>
-            </label>
-            <fieldset className="rounded-md border border-pencil/15 bg-cream p-4">
-              <legend className="px-1 text-sm font-black">
-                Pick a few crews you would check
-              </legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {crewPreviews.map((crew) => (
-                  <label
-                    className="flex cursor-pointer items-start gap-2 rounded-md border border-pencil/10 bg-paper/60 p-2 text-sm font-bold transition hover:border-moss/50 hover:bg-paper"
-                    key={crew.id}
-                  >
-                    <input
-                      className="mt-1 h-4 w-4 accent-moss"
-                      name="crew_interests"
-                      type="checkbox"
-                      value={crew.id}
-                    />
-                    <span>
-                      {crew.name}
-                      <span className="mt-1 block text-xs font-semibold leading-5 text-ink/58">
-                        {crew.examples}
-                      </span>
-                    </span>
-                  </label>
-                ))}
+            <div className="rounded-md border border-pencil/15 bg-cream p-4">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-sm font-black">
+                    Pick crews you’d actually show up for
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-ink/58">
+                    Choose up to 6 for now. You can add, remove, or edit crews
+                    after signup.
+                  </p>
+                </div>
+                <p className="text-xs font-black text-moss">
+                  {selectedCrewIds.length} of {CREW_SELECTION_LIMIT} selected
+                </p>
               </div>
-            </fieldset>
-            <label className="space-y-2">
-              <span className="label">Referral code</span>
-              <input
-                className="input"
-                defaultValue={defaults.referralCode}
-                name="referral_code"
-                placeholder="BOYSOFSUMMER"
-              />
-            </label>
+              {crewLimitMessage ? (
+                <p className="mt-3 rounded-md bg-amber/30 px-3 py-2 text-sm font-bold text-pencil">
+                  {crewLimitMessage}
+                </p>
+              ) : null}
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {crewPreviews.map((crew) => {
+                  const selected = selectedCrewIds.includes(crew.id);
+
+                  return (
+                    <label
+                      className={`grid min-h-16 cursor-pointer grid-cols-[1rem_1fr] gap-3 rounded-md border p-3 text-sm font-bold transition focus-within:ring-2 focus-within:ring-moss focus-within:ring-offset-2 focus-within:ring-offset-cream ${
+                        selected
+                          ? "border-moss bg-moss/15 shadow-[2px_2px_0_rgba(85,116,93,0.20)]"
+                          : "border-pencil/10 bg-paper/60 hover:border-moss/50 hover:bg-paper"
+                      }`}
+                      key={crew.id}
+                    >
+                      <input
+                        checked={selected}
+                        className="mt-1 h-4 w-4 accent-moss"
+                        name="crews"
+                        onChange={() => toggleCrew(crew.id)}
+                        type="checkbox"
+                        value={crew.id}
+                      />
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-2 leading-5">
+                          {crew.name}
+                          {selected ? (
+                            <span className="rounded-sm bg-moss px-1.5 py-0.5 text-[0.65rem] font-black uppercase text-cream">
+                              Selected
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="mt-1 block text-xs font-semibold leading-5 text-ink/58">
+                          {crew.examples}
+                        </span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+              <label className="mt-3 block space-y-2">
+                <span className="label">Suggest another crew</span>
+                <input
+                  className="input bg-paper/60"
+                  name="crew_suggestion"
+                  type="text"
+                />
+              </label>
+            </div>
+            <input name="referral_code" type="hidden" value={referralCode} />
+            {showReferral ? (
+              <label className="space-y-2">
+                <span className="label">Referral code</span>
+                <input
+                  className="input"
+                  onChange={(event) => setReferralCode(event.target.value)}
+                  placeholder="BOYSOFSUMMER"
+                  type="text"
+                  value={referralCode}
+                />
+              </label>
+            ) : (
+              <button
+                className="btn-secondary w-full justify-start bg-cream"
+                onClick={() => setShowReferral(true)}
+                type="button"
+              >
+                Have a referral code?
+              </button>
+            )}
             <label className="flex cursor-pointer items-start gap-3 rounded-md border border-pencil/15 bg-cream p-3 text-sm">
               <input
                 className="mt-1 h-4 w-4 accent-moss"
@@ -272,18 +378,18 @@ export default function JoinSignupPage() {
                 value="yes"
               />
               <span>
-                Send me DadBuds beta updates, local event invitations, and
-                occasional product news. I can unsubscribe at any time.
+                Send me DadBuds pilot updates and local event invitations. I can
+                unsubscribe at any time.
               </span>
             </label>
           </div>
 
           <button className="btn-primary mt-6 w-full" type="submit">
-            Join
+            Join DadBuds
             <ArrowRight size={18} />
           </button>
 
-          <p className="mt-4 text-xs leading-5 text-ink/55">
+          <p className="mt-4 text-xs leading-5 text-ink/68">
             {fullAppEnabled ? (
               <>
                 By joining the pilot list, you agree to the DadBuds{" "}
@@ -297,7 +403,7 @@ export default function JoinSignupPage() {
                 .
               </>
             ) : (
-              "By joining the pilot list, you agree that DadBuds may use this intake to follow up about the Spokane beta."
+              "By joining, you are okay with DadBuds following up about the Spokane pilot."
             )}
           </p>
         </form>

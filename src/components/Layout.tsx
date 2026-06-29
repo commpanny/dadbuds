@@ -1,6 +1,6 @@
 import { Menu, MessageCircle, UserRound } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 const navItems = [
   { to: "/plans", label: "Spokane Calendar" },
@@ -11,7 +11,6 @@ const navItems = [
 
 const shadowMode = import.meta.env.VITE_SHADOW_MODE === "true";
 const fullAppEnabled =
-  import.meta.env.DEV ||
   shadowMode ||
   import.meta.env.VITE_FULL_APP === "true";
 const internalNavItems =
@@ -28,6 +27,10 @@ const InlineFeedback = shadowMode ? lazy(() => import("./InlineFeedback")) : nul
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const onJoinFlow = location.pathname.startsWith("/join/signup") ||
+    location.pathname.startsWith("/join/thanks");
+  const onHowItWorks = location.pathname.startsWith("/how-it-works");
 
   function goHome() {
     setOpen(false);
@@ -45,11 +48,12 @@ export default function Layout() {
       <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/95 backdrop-blur">
         <div className="section-shell flex min-h-16 items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3" onClick={goHome}>
-            <img
-              src="/dadbuds-logo.png"
-              alt="DadBuds"
-              className="h-12 w-14 rounded-md object-cover object-center"
-            />
+            <span
+              aria-hidden="true"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-pencil/20 bg-cream text-sm font-black text-pencil"
+            >
+              DB
+            </span>
             <span className="text-lg font-black tracking-normal">DadBuds</span>
           </Link>
 
@@ -88,10 +92,25 @@ export default function Layout() {
                 </Link>
               </>
             ) : null}
-            <Link className="btn-primary" to="/join/signup">
-              <UserRound size={18} />
-              Join Spokane Pilot
-            </Link>
+            {onHowItWorks ? (
+              <a className="btn-secondary" href="#pilot-crews">
+                Browse crews
+              </a>
+            ) : (
+              <Link className="btn-secondary" to="/how-it-works">
+                See how it works
+              </Link>
+            )}
+            {onJoinFlow ? (
+              <Link className="btn-secondary" to="/join">
+                Back to DadBuds
+              </Link>
+            ) : (
+              <Link className="btn-primary" to="/join/signup">
+                <UserRound size={18} />
+                Join Spokane Pilot
+              </Link>
+            )}
           </div>
 
           <button
@@ -125,14 +144,41 @@ export default function Layout() {
                   Sign in
                 </Link>
               ) : null}
-              <Link
-                className="btn-primary"
-                to="/join/signup"
-                onClick={() => setOpen(false)}
-              >
-                <UserRound size={18} />
-                Join Spokane Pilot
-              </Link>
+              {onHowItWorks ? (
+                <a
+                  className="btn-secondary"
+                  href="#pilot-crews"
+                  onClick={() => setOpen(false)}
+                >
+                  Browse crews
+                </a>
+              ) : (
+                <Link
+                  className="btn-secondary"
+                  to="/how-it-works"
+                  onClick={() => setOpen(false)}
+                >
+                  See how it works
+                </Link>
+              )}
+              {onJoinFlow ? (
+                <Link
+                  className="btn-secondary"
+                  to="/join"
+                  onClick={() => setOpen(false)}
+                >
+                  Back to DadBuds
+                </Link>
+              ) : (
+                <Link
+                  className="btn-primary"
+                  to="/join/signup"
+                  onClick={() => setOpen(false)}
+                >
+                  <UserRound size={18} />
+                  Join Spokane Pilot
+                </Link>
+              )}
             </div>
           </div>
         ) : null}
@@ -164,7 +210,7 @@ export default function Layout() {
                 </Link>
               </>
             ) : null}
-            <span>Local plans with clear details.</span>
+            <span>Plans, crews, low pressure.</span>
           </div>
         </div>
       </footer>
