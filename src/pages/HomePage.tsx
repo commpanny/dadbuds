@@ -47,9 +47,9 @@ export default function HomePage({ joinPath = "/join/signup" }: HomePageProps) {
               {taglines[taglineIndex]}
             </p>
             <p className="mt-6 max-w-xl text-lg leading-8 text-ink/75">
-              Pick the crews you’d actually show up for. DadBuds watches for
-              relevant local events and invites the right crews when there’s
-              something worth leaving the house for.
+              DadBuds helps busy dads make actual plans with actual people.
+              Find your people. Tell us when you’re free. We’ll find local
+              stuff, rally the buds, track interest, and remind everyone.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" to={joinPath}>
