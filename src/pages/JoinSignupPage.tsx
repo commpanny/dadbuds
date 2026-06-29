@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { crewPreviews } from "../lib/crews";
 
 const trackedFields = [
   "utm_source",
@@ -142,12 +143,15 @@ export default function JoinSignupPage() {
         </div>
 
         <form
-          action="/api/join"
+          action="/join/thanks"
           className="rounded-lg border border-pencil/15 bg-paper p-6 shadow-soft"
+          data-netlify="true"
           method="POST"
           name="dadbuds-spokane-beta"
+          netlify-honeypot="bot-field"
           onSubmit={onSubmit}
         >
+          <input name="form-name" type="hidden" value="dadbuds-spokane-beta" />
           {trackedFields.map((field) => (
             <input
               key={field}
@@ -225,6 +229,32 @@ export default function JoinSignupPage() {
               />
               <span>Bring DadBuds to my ZIP code</span>
             </label>
+            <fieldset className="rounded-md border border-pencil/15 bg-cream p-4">
+              <legend className="px-1 text-sm font-black">
+                Pick a few crews you would check
+              </legend>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {crewPreviews.map((crew) => (
+                  <label
+                    className="flex cursor-pointer items-start gap-2 rounded-md border border-pencil/10 bg-paper/60 p-2 text-sm font-bold transition hover:border-moss/50 hover:bg-paper"
+                    key={crew.id}
+                  >
+                    <input
+                      className="mt-1 h-4 w-4 accent-moss"
+                      name="crew_interests"
+                      type="checkbox"
+                      value={crew.id}
+                    />
+                    <span>
+                      {crew.name}
+                      <span className="mt-1 block text-xs font-semibold leading-5 text-ink/58">
+                        {crew.examples}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <label className="space-y-2">
               <span className="label">Referral code</span>
               <input

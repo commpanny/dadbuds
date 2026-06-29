@@ -1,6 +1,6 @@
 # Cloudflare Pages Deployment
 
-DadBuds public launch should deploy as a static Cloudflare Pages site with one Pages Function for intake submissions.
+DadBuds public launch can deploy as a static Cloudflare Pages site with one Pages Function for intake submissions. The live Netlify build currently uses Netlify Forms, so switch the join form back to `/api/join` during the Cloudflare cutover.
 
 ## Project settings
 
@@ -13,7 +13,7 @@ DadBuds public launch should deploy as a static Cloudflare Pages site with one P
 
 ## Intake storage
 
-The public join form posts to `/api/join`. That route is handled by `functions/api/join.ts` and stores submissions in a KV namespace binding.
+For Cloudflare, the public join form should post to `/api/join`. That route is handled by `functions/api/join.ts` and stores submissions in a KV namespace binding.
 
 Create a KV namespace:
 
@@ -53,10 +53,11 @@ Vite copies both files into `dist` during `npm run build`.
 
 1. In Netlify, stop automatic Git deploys for the existing DadBuds site before pushing more commits to `main`.
 2. Push this repo to GitHub so Cloudflare can build the current Cloudflare-ready version.
-3. Deploy a Cloudflare Pages preview.
-4. Submit a test lead at `/join/signup`.
-5. Confirm a KV record appears under `DADBUDS_LEADS`.
-6. Move `dadbuds.lol` DNS/custom domain to Cloudflare Pages.
-7. Leave Netlify parked or remove the Netlify project after DNS has fully moved.
+3. Change the join form action from `/join/thanks` to `/api/join` and remove Netlify form attributes.
+4. Deploy a Cloudflare Pages preview.
+5. Submit a test lead at `/join/signup`.
+6. Confirm a KV record appears under `DADBUDS_LEADS`.
+7. Move `dadbuds.lol` DNS/custom domain to Cloudflare Pages.
+8. Leave Netlify parked or remove the Netlify project after DNS has fully moved.
 
 The repo still contains `netlify.toml` so old deploy history remains readable. Cloudflare ignores that file.

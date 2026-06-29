@@ -21,6 +21,7 @@ type Lead = {
   referral_code: string;
   spokane_beta: boolean;
   zip_code_interest: boolean;
+  crew_interests: string[];
   marketing_consent: boolean;
   source_url: string;
   utm: Record<string, string>;
@@ -45,6 +46,14 @@ function text(form: FormData, key: string) {
 
 function checked(form: FormData, key: string) {
   return form.get(key) === "yes";
+}
+
+function selected(form: FormData, key: string) {
+  return form
+    .getAll(key)
+    .filter((value): value is string => typeof value === "string")
+    .map((value) => value.trim().slice(0, 80))
+    .filter(Boolean);
 }
 
 function redirect(request: Request, path: string) {
@@ -81,6 +90,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     referral_code: text(form, "referral_code") || "BOYSOFSUMMER",
     spokane_beta: checked(form, "spokane_beta"),
     zip_code_interest: checked(form, "zip_code_interest"),
+    crew_interests: selected(form, "crew_interests"),
     marketing_consent: checked(form, "marketing_consent"),
     source_url: text(form, "source_url"),
     utm: Object.fromEntries(
